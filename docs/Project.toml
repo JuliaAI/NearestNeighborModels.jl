@@ -1,0 +1,3 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+MLJNearestNeighborsInterface = "636a865e-7cf4-491e-846c-de09b730eb36"
