@@ -9,7 +9,7 @@ const MMI = MLJModelInterface
 
 using Distances
 
-import ..NearestNeighbors
+import NearestNeighbors
 
 const NN = NearestNeighbors
 
