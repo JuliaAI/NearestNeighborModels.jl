@@ -388,7 +388,8 @@ metadata_model(
     input = Table(Continuous),
     target = Vec{Continuous},
     weights = true,
-    descr = KNNRegressorDescription
+    descr = KNNRegressorDescription,
+    path = "$(PKG).KNNRegressor"
 )
 
 metadata_model(
@@ -396,7 +397,8 @@ metadata_model(
     input = Table(Continuous),
     target = Vec{<:Finite},
     weights = true,
-    descr = KNNClassifierDescription
+    descr = KNNClassifierDescription,
+    path = "$(PKG).KNNClassifier"
 )
 
 metadata_model(
@@ -404,7 +406,8 @@ metadata_model(
     input = Table(Continuous),
     target = Table(Finite),
     weights = true,
-    descr = KNNClassifierDescription
+    descr = KNNClassifierDescription,
+    path = "$(PKG).MultitargetKNNClassifier"
 )
 
 metadata_model(
@@ -412,5 +415,6 @@ metadata_model(
     input = Table(Continuous),
     target = Table(Continuous),
     weights = true,
-    descr = KNNRegressorDescription
+    descr = KNNRegressorDescription,
+    path = "$(PKG).MultitargetKNNRegressor"
 )
