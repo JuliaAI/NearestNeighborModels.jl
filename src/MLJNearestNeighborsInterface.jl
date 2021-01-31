@@ -75,9 +75,9 @@ const SeeAlso = """
     See also the 
     [package documentation](https://github.com/KristofferC/NearestNeighbors.jl).
     For more information about the kernels see the paper by Geler et.al 
-    [Comparison of different weighting schemes for the kNN classifier 
-    on time-series data](https://perun.pmf.uns.ac.rs/radovanovic/publications/
-    2016-kais-knn-weighting.pdf).
+    [Comparison of different weighting schemes for the kNN classifier
+    on time-series data]
+    (https://perun.pmf.uns.ac.rs/radovanovic/publications/2016-kais-knn-weighting.pdf).
     """
 
 const MultitargetKNNClassifierFields = """
