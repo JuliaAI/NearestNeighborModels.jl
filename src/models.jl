@@ -253,7 +253,7 @@ $KNNRegressorDescription
 
 $KNNFields
 """
-@mlj_model mutable struct MultitargetKNNRegressor <: MMI.Probabilistic
+@mlj_model mutable struct MultitargetKNNRegressor <: MMI.Deterministic
     K::Int = 5::(_ > 0)
     algorithm::Symbol = :kdtree::(_ in (:kdtree, :brutetree, :balltree))
     metric::Metric = Euclidean()
