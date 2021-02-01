@@ -1,8 +1,10 @@
-# MLJ <> NearestNeighbors.jl
-Repository implementing MLJ interface for 
+# NearestNeighborsModels
+
+Repository implementing MLJ interface and weighting kernels for 
 [NearestNeighbors](https://github.com/KristofferC/NearestNeighbors.jl) models.
 
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://vollmersj.github.io/NearestNeighborsModels.jl/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://vollmersj.github.io/NearestNeighborsModels.jl/dev)
+[![Build Status](https://github.com/alan-turing-institute/NearestNeighborsModels.jl/workflows/CI/badge.svg)](https://github.com/alan-turing-institute/NearestNeighborsModels.jl/actions)
+[![Coverage](https://codecov.io/gh/alan-turing-institute/NearestNeighborsModels.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/vollmersj/NearestNeighborsModels.jl)
 
-[![Build Status](https://github.com/alan-turing-institute/MLJNearestNeighborsInterface.jl/workflows/CI/badge.svg)](https://github.com/alan-turing-institute/MLJNearestNeighborsInterface.jl/actions)
-[![Coverage](http://codecov.io/github/alan-turing-institute/MLJNearestNeighborsInterface.jl/coverage.svg?branch=master)](https://codecov.io/gh/alan-turing-institute/MLJNearestNeighborsInterface.jl)
-[![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
