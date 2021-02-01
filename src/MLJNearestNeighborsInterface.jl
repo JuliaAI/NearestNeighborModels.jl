@@ -19,7 +19,7 @@ using Statistics
 export list_kernels, ColumnTable, DictTable
 
 # Export KNN models
-export KNNClassifier, KNNRegressor, MultitargetKNNRegressor
+export KNNClassifier, KNNRegressor, MultitargetKNNRegressor, MultitargetKNNClassifier
 
 # Re-Export Distance Metrics from `Distances.jl`
 export Euclidean, Cityblock, Minkowski, Chebyshev, Hamming, WeightedEuclidean,
