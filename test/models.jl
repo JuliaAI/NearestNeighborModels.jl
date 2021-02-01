@@ -193,39 +193,3 @@ end
         @test all(pr[col][2*ntest+1:end] .≈ [-2.0])
     end
 end
-
-# possibly redundant ?
-#=@testset "model metadata" begin
-    # KNNClassifier
-    knnc = KNNClassifier()
-    infos = info_dict(knnc)
-    @test infos[:package_name] == "NearestNeighbors"
-    @test infos[:input_scitype] == Table(Continuous)
-    @test infos[:target_scitype] == AbstractVector{<:Finite}
-    infos[:docstring]
-    
-    # MultitargetKNNClassifier
-    multi_knnc = MultitargetKNNClassifier()
-    infos = info_dict(multi_knnc)
-    @test infos[:package_name] == "NearestNeighbors"
-    @test infos[:input_scitype] == Table(Continuous)
-    @test infos[:target_scitype] == Table(Finite)
-    infos[:docstring]
-    
-    # KNNRegressor
-    knnr = KNNRegressor()
-    infos = info_dict(knnr)
-    @test infos[:package_name] == "NearestNeighbors"
-    @test infos[:input_scitype] == Table(Continuous)
-    @test infos[:target_scitype] == AbstractVector{Continuous}
-    infos[:docstring]
-    
-    # MultitargetKNNRegressor
-    multi_knnr = MultitargetKNNRegressor()
-    infos = info_dict(multi_knnr)
-    @test infos[:package_name] == "NearestNeighbors"
-    @test infos[:input_scitype] == Table(Continuous)
-    @test infos[:target_scitype] == Table(Continuous)
-    infos[:docstring]
-end
-=#
