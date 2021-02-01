@@ -13,30 +13,35 @@ list_kernels() = subtypes(KNNKernel)
 _nothing(x) = nothing
 
 """
-    UDK(;func::Function = x->nothing, sort::Bool=false)
+    UserDefinedKernel(;func::Function = x->nothing, sort::Bool=false)
 
 Wrap a user defined nearest neighbors weighting function `func` as a `KNNKernel`.
  
 # Keywords
 
 - `func` : user-defined nearest neighbors weighting function. The function 
-   should have the signature `func(dists_matrix)::Union{Nothing, <:AbstractMatrix}`, 
-   where `dists_matrix` is the k-nearest neighbors distances matrix and outputs a matrix 
-   of the same shape as `dists_matrix`.   
-- `sort` : if true sorts the `dists_matrix` so that in each row the gives 
-   k-nearest neighbors in acesending order.
+   should have the signature `func(dists_matrix)::Union{Nothing, <:AbstractMatrix}`.
+   The `dists_matrix` is a `n` by `K` nearest neighbors distances matrix where 
+   `n` is the number of samples in the test dataset and `K` is number of neighbors. 
+   `func` should either output `nothing` or an `AbstractMatrix` of the same shape 
+   as `dists_matrix`.   
+- `sort` : if true requests that the `dists_matrix` be sorted before being passed 
+   to `func`. The sort is done in a manner that puts the k-nearest neighbors in 
+   each row  of `dists_matrix` in acesending order .
   
 """
-struct UDK{T<:Function} <: KNNKernel
+struct UserDefinedKernel{T<:Function} <: KNNKernel
    func::T
    sort::Bool
-   UDK(func::F, sort::Bool) where {F<:Function} = new{F}(func, sort)
+   UserDefinedKernel(func::F, sort::Bool) where {F<:Function} = new{F}(func, sort)
 end
 
-UDK(;func= _nothing, sort=false) = UDK(func, sort)
-sort_idxs(kernel::UDK) = kernel.sort
+const UDK = UserDefinedKernel
 
-function get_weights(kernel::UDK, dists_matrix)
+UserDefinedKernel(;func= _nothing, sort=false) = UserDefinedKernel(func, sort)
+sort_idxs(kernel::UserDefinedKernel) = kernel.sort
+
+function get_weights(kernel::UserDefinedKernel, dists_matrix)
     func = kernel.func
     nsamples, K = size(dists_matrix)
     weights = func(dists_matrix)
