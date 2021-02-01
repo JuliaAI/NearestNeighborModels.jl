@@ -26,9 +26,8 @@ export Euclidean, Cityblock, Minkowski, Chebyshev, Hamming, WeightedEuclidean,
     WeightedCityblock, WeightedMinkowski
 
 # Export KNN Kernels
-export DualU, DualD, Dudani, Fibonacci, Inverse, ISquared, KNNKernel, Macleod, Rank, ReciprocalRank,
-    UDK, Uniform , Zavreal
-     
+export DualU, DualD, Dudani, Fibonacci, Inverse, ISquared, KNNKernel, Macleod, Rank,
+    ReciprocalRank, UDK, Uniform, UserDefinedKernel, Zavreal
 
 # ===================================================================
 ## CONSTANTS
