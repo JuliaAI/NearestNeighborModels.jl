@@ -1,4 +1,4 @@
-module NearestNeighborsModels
+module NearestNeighborModels
 
 # ===================================================================
 # IMPORTS
@@ -117,9 +117,9 @@ const MODELS = (
 # PKG_METADATA
 metadata_pkg.(
     MODELS,
-    name = "NearestNeighborsModels",
+    name = "NearestNeighborModels",
     uuid = "6f286f6a-111f-5878-ab1e-185364afe411",
-    url = "https://github.com/alan-turing-institute/NearestNeighborsModels.jl",
+    url = "https://github.com/alan-turing-institute/NearestNeighborModels.jl",
     license = "MIT",
     julia = true,
     is_wrapper = false
