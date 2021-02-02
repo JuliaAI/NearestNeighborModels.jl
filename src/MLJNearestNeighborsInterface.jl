@@ -41,7 +41,7 @@ const MultiUnivariateFinite = Union{DictTable, ColumnTable}
 # Define constants for easy referencing of packages
 const MMI = MLJModelInterface
 const NN = NearestNeighbors
-const PKG = "MLJNearestNeighborsInterface"
+const PKG = "NearestNeighborsModels"
 
 # Definitions of model descriptions for use in model doc-strings.
 const KNNRegressorDescription = """
