@@ -10,7 +10,7 @@ import NearestNeighborsModels: check_onebased_indexing, combine_weights,
 
 include("testutils.jl")
 
-@testset "MLJNearestNeighborsInterface.jl" begin
+@testset "NearestNeighborsModels.jl" begin
     include("models.jl")
     include("utils.jl")
     include("kernels.jl")
