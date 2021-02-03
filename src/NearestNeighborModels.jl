@@ -35,13 +35,13 @@ const Vec{T} = AbstractVector{T}
 const Mat{T} = AbstractMatrix{T}
 const Arr{T, N} = AbstractArray{T, N}
 const ColumnTable =  Tables.ColumnTable
-const DictTable = Dict{Symbol, <:AbstractVector}
+const DictTable = Tables.DictColumns
 const MultiUnivariateFinite = Union{DictTable, ColumnTable}
 
 # Define constants for easy referencing of packages
 const MMI = MLJModelInterface
 const NN = NearestNeighbors
-const PKG = "NearestNeighborsModels"
+const PKG = "NearestNeighborModels"
 
 # Definitions of model descriptions for use in model doc-strings.
 const KNNRegressorDescription = """
