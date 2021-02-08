@@ -29,7 +29,7 @@ function dict_preds(::Val{:columnaccess}, func, target_table, idxsvec, weights)
     dict_table = Dict(
         nm => func(weights, Tables.getcolumn(cols, nm), idxsvec) for nm in colnames
     )
-    return dict_table  
+    return dict_table
 end
 
 function dict_preds(::Val{:noncolumnaccess}, func, target_table, idxsvec, weights)
@@ -62,7 +62,7 @@ end
 function ntuple_preds(::Val{:noncolumnaccess}, func, target_table, idxsvec, weights)
     cols = Tables.columntable(target_table)
     colnames = Tables.columnnames(cols)
-    column_table = NamedTuple{colnames}( 
+    column_table = NamedTuple{colnames}(
         func(weights, Tables.getcolumn(col, nm), idxsvec) for nm in colnames
     )
     return column_table
@@ -152,37 +152,37 @@ end
 function _predict_knnclassifier(weights, y, idxsvec)
     # `classes` and `classes_seen` has an ordering consistent with the pool of y
     classes = @inbounds MMI.classes(y[1])
-    classes_seen = filter(in(unique(y)), classes) 
+    classes_seen = filter(in(unique(y)), classes)
     nclasses = length(classes)
     nc = length(classes_seen) # Number of classes seen in `y`.
-    
-    # `labels` and `integers_seen` assigns ranks {1, 2, ..., nclasses}, to the 
+
+    # `labels` and `integers_seen` assigns ranks {1, 2, ..., nclasses}, to the
     # `CategoricalValue`'s in `y` according the ordering given by the pool of `y`.
-    # In the case of `integers_seen` the ranks happen to sorted with the lower ranks 
+    # In the case of `integers_seen` the ranks happen to sorted with the lower ranks
     # comming first and the higher rank coming last.
     # In both cases some ranks may be absent because some categorical values in `classes`
-    # may be absent from `y` (in the case of `labels`) and `classes_seen` 
+    # may be absent from `y` (in the case of `labels`) and `classes_seen`
     # (in the case of `integers_seen`).
     labels = MMI.int(y)
     integers_seen = MMI.int(classes_seen)
-    
+
     # Recode `integers_seen` to be in {1,..., nc}
     # same as nc == nclasses || replace!(labels, (integers_seen .=> 1:nc)...)
     nc == nclasses || _replace!(labels, integers_seen, 1:nc)
     nsamples = length(idxsvec)
     probs = zeros(eltype(weights), nsamples, nc)
-    
+
     @inbounds for i in eachindex(idxsvec)
         idxs = idxsvec[i]
         idxs_labels = @view(labels[idxs])
         @simd for j in eachindex(idxs_labels)
-             @inbounds probs[i, idxs_labels[j]] += weights[i, j] 
+             @inbounds probs[i, idxs_labels[j]] += weights[i, j]
         end
-    end  
+    end
     return MMI.UnivariateFinite(classes_seen, scale(probs, dims=2))
 end
- 
-function MMI.predict(m::KNNClassifier, fitresult, X) 
+
+function MMI.predict(m::KNNClassifier, fitresult, X)
     err_if_given_invalid_K(m.K)
     Xmatrix = transpose(MMI.matrix(X))
     check_onebased_indexing("prediction input", Xmatrix)
@@ -233,12 +233,12 @@ function _predict_knnreg(weights, y, idxs_matrix)
     return preds
 end
 function MMI.predict(m::KNNRegressor, fitresult, X)
-    err_if_given_invalid_K(m.K)    
+    err_if_given_invalid_K(m.K)
     #Xmatrix = MMI.matrix(X, transpose=true) # NOTE: copies the data
     Xmatrix = transpose(MMI.matrix(X))
     check_onebased_indexing("prediction input", Xmatrix)
     predict_args = setup_predict_args(m, Xmatrix, fitresult)
-    preds = _predict_knnreg(predict_args...)
+    preds = _predict_knnreg(predict_args...) |> vec
     return preds
 end
 
@@ -301,25 +301,25 @@ function _predict_multiknnreg(weights, Ymatrix, idxs_matrix)
         );
         dims = 3
    )
-   # Normalizing the weighted labels gives us our final preds  
+   # Normalizing the weighted labels gives us our final preds
    preds = @inbounds(@view(weighted_labels[:, :, 1])) ./ _sum(weights, dims=2)
    return preds
 end
 
 function MMI.predict(m::MultitargetKNNRegressor, fitresult, X)
-    err_if_given_invalid_K(m.K)  
+    err_if_given_invalid_K(m.K)
     #Xmatrix = MMI.matrix(X, transpose=true) # NOTE: copies the data
     Xmatrix = transpose(MMI.matrix(X))
     check_onebased_indexing("prediction input", Xmatrix)
     names, args = setup_predict_args(m, Xmatrix, fitresult)
     preds = _predict_multiknnreg(args...)
-    # A matrix table was intentionally outputed. 
+    # A matrix table was intentionally outputed.
     # Users can coerce to their desired Table type.
     return MMI.table(preds, names = names)
 end
 
 ##################
-### FIT MODELS 
+### FIT MODELS
 ##################
 
 struct MultiKNNRegressorTarget{S, M<:AbstractMatrix}
@@ -339,7 +339,7 @@ end
 
 function get_target(::KNNRegressor, y)
    check_onebased_indexing("input_target", y)
-   return y 
+   return y
 end
 
 # `CategoricalArrays` and `Table(Finite)` are one-based indexed arrays and tables.
@@ -348,14 +348,14 @@ get_target(::Union{KNNClassifier, MultitargetKNNClassifier}, y) = y
 struct KNNResult{T, U, W}
     tree::T
     target::U
-    sample_weights::W    
+    sample_weights::W
 end
 
 const KNN = Union{
     KNNClassifier, KNNRegressor, MultitargetKNNRegressor, MultitargetKNNClassifier
 }
 
-function MMI.fit(m::KNN, verbosity::Int, X, y, w::Union{Nothing, Vec{<:Real}}=nothing) 
+function MMI.fit(m::KNN, verbosity::Int, X, y, w::Union{Nothing, Vec{<:Real}}=nothing)
     Xmatrix = transpose(MMI.matrix(X))
     target = get_target(m, y)
     if w !== nothing

@@ -1,16 +1,15 @@
-
-@testset "KNNClassifier" begin 
+@testset "KNNClassifier" begin
     # create something rather silly: 3 massive clusters very separated
     rng = StableRNG(10)
     n, p = 50, 3
     x, w = make_x_and_w(n, p, rng=rng)
     w1 = rand(rng, n-5)
-    
+
     y1 = fill("A", n)
     y2 = fill("B", n)
     y3 = fill("C", n)
     y = categorical(vcat(y1, y2, y3))
-    
+
     # generate test data
     ntest =  5
     xtest = make_xtest(ntest, p, rng=rng)
@@ -18,7 +17,7 @@
     ytest2 = fill("B", ntest)
     ytest3 = fill("C", ntest)
     ytest = categorical(vcat(ytest1, ytest2, ytest3))
-    
+
     # Test model fit
     knnc = KNNClassifier(weights=Inverse())
     f, _, _ = fit(knnc, 1, x, y)
@@ -27,7 +26,7 @@
     @test f2 isa KNNResult
     @test f2.sample_weights == w
     @test fitted_params(knnc, f) == (tree=f.tree,)
-    
+
     # Check predictions gotten from the model
     p = predict(knnc, f, xtest)
     p2 = predict(knnc, f2, xtest)
@@ -39,7 +38,7 @@
     @test accuracy(p2, ytest) == 1.0
 end
 
-@testset "MultitargetKNNClassifier" begin 
+@testset "MultitargetKNNClassifier" begin
     # create something rather silly: 3 massive clusters very separated
     rng = StableRNG(10)
     n, p = 50, 3
@@ -53,7 +52,7 @@ end
     y1 = categorical(vcat(y11, y21, y31))
     y2 = categorical(vcat(y12, y22, y32), ordered=true)
     y = (a=y1, b=y2)
-    
+
     # generate test data
     ntest =  5
     xtest = make_xtest(ntest, p, rng=rng)
@@ -66,14 +65,14 @@ end
     ytest1 = categorical(vcat(ytest11, ytest21, ytest31))
     ytest2 = categorical(vcat(ytest12, ytest22, ytest32), ordered=true)
     ytest = (a=ytest1, b=ytest2)
-    
-    # Create two models, the first has an `output_type` of `DictTable` while the second 
+
+    # Create two models, the first has an `output_type` of `DictTable` while the second
     # has an `output_type` of `ColumnTable`
     multi_knnc = MultitargetKNNClassifier(weights=Inverse())
     multi_knnc2 = MultitargetKNNClassifier(
         weights=Inverse(), output_type=ColumnTable
     )
-    
+
     # Test model fit
     f, _, _ = fit(multi_knnc, 1, x, y)
     f2, _ , _ = fit(multi_knnc, 1, x, y, w)
@@ -83,7 +82,7 @@ end
     @test f2.sample_weights == w
     @test f4.sample_weights == w
     @test fitted_params(multi_knnc, f) == (tree=f.tree,)
-    
+
     # Check predictions gotten from the model
     p = predict(multi_knnc, f, xtest)
     p2 = predict(multi_knnc, f2, xtest)
@@ -92,13 +91,13 @@ end
     p5 = predict_mode(multi_knnc, f, xtest)
     p6 = predict_mode(multi_knnc, f2, xtest)
     p7 = predict_mode(multi_knnc2, f3, xtest)
-    p8 = predict_mode(multi_knnc2, f4, xtest)   
+    p8 = predict_mode(multi_knnc2, f4, xtest)
     for col in [:a, :b]
         @test p[col][1] isa UnivariateFinite
         @test p2[col][1] isa UnivariateFinite
         @test p3[col][1] isa UnivariateFinite
         @test p4[col][1] isa UnivariateFinite
-        
+
         @test accuracy(p5[col], ytest[col]) == 1.0
         @test accuracy(p6[col], ytest[col]) == 1.0
         @test accuracy(p7[col], ytest[col]) == 1.0
@@ -145,20 +144,21 @@ end
     y2 = fill( 2.0, n)
     y3 = fill(-2.0, n)
     y = vcat(y1, y2, y3)
-    
+
     # Test model fit
     knnr = KNNRegressor(weights=Inverse())
     f, _, _ = fit(knnr, 1, x, y)
     f2, _, _ = fit(knnr, 1, x, y, w)
     @test f2 isa KNNResult
     @test fitted_params(knnr, f) == (tree=f.tree,)
-    
+
     # Create test data
     ntest =  5
     xtest = make_xtest(ntest, p, rng=rng)
-    
+
     # Check predictions gotten from the model
     p = predict(knnr, f, xtest)
+    @test p isa AbstractVector
     p2 = predict(knnr, f2, xtest)
     @test all(p[1:ntest] .≈ 0.0)
     @test all(p[ntest+1:2*ntest] .≈ 2.0)
@@ -172,7 +172,7 @@ end
     x, w = make_x_and_w(n, p, rng=rng)
     ymat = vcat(fill( 0.0, n, 2), fill(2.0, n, 2), fill(-2.0, n, 2))
     Y = table(ymat; names = [:a, :b])
-    
+
     # Test model fit
     multi_knnr = MultitargetKNNRegressor(weights=Inverse())
     f, _ , _ = fit(multi_knnr, 1, x, Y)
@@ -180,11 +180,11 @@ end
     @test fitted_params(multi_knnr, f) == (tree=f.tree,)
     @test f2 isa KNNResult
     @test f2.sample_weights == w
-    
+
     # Create test data
     ntest = 5
     xtest = make_xtest(ntest, p, rng=rng)
-    
+
     # Check predictions gotten from the model
     pr = predict(multi_knnr, f, xtest)
     for col in [:a, :b]
