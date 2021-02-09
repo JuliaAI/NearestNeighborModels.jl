@@ -229,7 +229,9 @@ end
 
 function _predict_knnreg(weights, y, idxs_matrix)
     @inbounds labels = @view(y[idxs_matrix])
-    preds = @view(_sum(labels .* weights, dims=2)[:]) ./ _sum(weights, dims=2)
+    preds = @inbounds(
+        @view(_sum(labels .* weights, dims=2)[:]) ./ @view(_sum(weights, dims=2)[:])
+    )
     return preds
 end
 function MMI.predict(m::KNNRegressor, fitresult, X)
@@ -238,7 +240,7 @@ function MMI.predict(m::KNNRegressor, fitresult, X)
     Xmatrix = transpose(MMI.matrix(X))
     check_onebased_indexing("prediction input", Xmatrix)
     predict_args = setup_predict_args(m, Xmatrix, fitresult)
-    preds = _predict_knnreg(predict_args...) |> vec
+    preds = _predict_knnreg(predict_args...)
     return preds
 end
 
