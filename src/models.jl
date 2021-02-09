@@ -234,6 +234,7 @@ function _predict_knnreg(weights, y, idxs_matrix)
     )
     return preds
 end
+
 function MMI.predict(m::KNNRegressor, fitresult, X)
     err_if_given_invalid_K(m.K)
     #Xmatrix = MMI.matrix(X, transpose=true) # NOTE: copies the data
