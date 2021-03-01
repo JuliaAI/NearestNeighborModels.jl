@@ -99,9 +99,9 @@ docs:
           julia --project=docs -e '
             if ENV["BUILD_DOCS"] == "true"
                 using Documenter: doctest
-                using MLJ
+                using NearestNeighborModels
                 @info "attempting to run the doctests"
-                doctest(MLJ)
+                doctest(NearestNeighborModels)
             else
                 @info "skipping the doctests"
             end'
