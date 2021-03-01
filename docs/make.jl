@@ -1,21 +1,25 @@
-using MLJNearestNeighborsInterface
-using Documenter
+using Documenter, NearestNeighborModels
 
 makedocs(;
-    modules=[MLJNearestNeighborsInterface],
-    authors="Sebastian Vollmer <s.vollmer.4@warwick.ac.uk> and contributors",
-    repo="https://github.com/vollmersj/MLJNearestNeighborsInterface.jl/blob/{commit}{path}#L{line}",
-    sitename="MLJNearestNeighborsInterface.jl",
-    format=Documenter.HTML(;
-        prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://vollmersj.github.io/MLJNearestNeighborsInterface.jl",
-        assets=String[],
+    authors = """
+        Anthony D. Blaom <anthony.blaom@gmail.com>, 
+        Sebastian Vollmer <s.vollmer.4@warwick.ac.uk>, 
+        Thibaut Lienart <thibaut.lienart@gmail.com> and 
+        Okon Samuel <okonsamuel50@gmail.com>
+        """,
+    format = Documenter.HTML(;
+        prettyurls= get(ENV, "CI", "false") == "true"
     ),
+    modules = [NearestNeighborModels],
     pages=[
         "Home" => "index.md",
+        "API" => "api.md"
     ],
+    repo = "https://github.com/alan-turing-institute/NearestNeighborModels.jl/blob/{commit}{path}#L{line}",
+    sitename = "NearestNeighborModels.jl",
 )
 
 deploydocs(;
-    repo="github.com/vollmersj/MLJNearestNeighborsInterface.jl",
+    repo="github.com/alan-turing-institute/NearestNeighborModels.jl.git",
 )
+
