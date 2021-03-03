@@ -84,6 +84,11 @@ jobs:
            if build_docs
                @info("We will build the docs")
                set_environment_variable("BUILD_DOCS", "true")
+               if event_name == "pull_request"
+                   set_environment_variable("GITHUB_EVENT_NAME", "pull_request")
+               else
+                   set_environment_variable("GITHUB_EVENT_NAME", "push")
+               end
            else 
                @info("We will NOT build the docs")
                set_environment_variable("BUILD_DOCS", "false")
