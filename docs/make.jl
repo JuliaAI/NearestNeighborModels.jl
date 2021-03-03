@@ -21,6 +21,5 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/alan-turing-institute/NearestNeighborModels.jl.git",
-    push_preview = true
 )
 
