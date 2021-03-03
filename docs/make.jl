@@ -24,7 +24,7 @@ makedocs(;
 # up choking the deployment of the docs, so  here we
 # force the environment to ignore this so that Documenter
 # does indeed deploy the docs
-ENV["GITHUB_EVENT_NAME"] = "pull_request"
+#ENV["GITHUB_EVENT_NAME"] = "pull_request"
 
 deploydocs(;
     deploy_config = Documenter.GitHubActions(),
