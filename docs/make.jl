@@ -19,6 +19,13 @@ makedocs(;
     sitename = "NearestNeighborModels.jl",
 )
 
+# By default Documenter does not deploy docs just for PR
+# this causes issues with how we're doing things and ends
+# up choking the deployment of the docs, so  here we
+# force the environment to ignore this so that Documenter
+# does indeed deploy the docs
+ENV["TRAVIS_PULL_REQUEST"] = "false"
+
 deploydocs(;
     repo="github.com/alan-turing-institute/NearestNeighborModels.jl.git",
 )
