@@ -27,7 +27,7 @@ makedocs(;
 ENV["GITHUB_EVENT_NAME"] = "pull_request"
 
 deploydocs(;
-    deploy_config = GitHubActions(),
+    deploy_config = Documenter.GitHubActions(),
     repo="github.com/alan-turing-institute/NearestNeighborModels.jl.git",
 )
 
