@@ -1,9 +1,15 @@
-
+"""
+    KNNKernel
+Abstract super type for all weighting kernels
+"""
 abstract type KNNKernel end
 
 sort_idxs(::KNNKernel) = false
 
-# Function that lists all defined `KNNKernels`
+"""
+    list_kernels()
+Lists all implemented KNN weighting kernels
+"""
 list_kernels() = subtypes(KNNKernel) 
 
 ####
@@ -24,7 +30,8 @@ Wrap a user defined nearest neighbors weighting function `func` as a `KNNKernel`
    The `dists_matrix` is a `n` by `K` nearest neighbors distances matrix where 
    `n` is the number of samples in the test dataset and `K` is number of neighbors. 
    `func` should either output `nothing` or an `AbstractMatrix` of the same shape 
-   as `dists_matrix`.   
+   as `dists_matrix`.  If `func(dists_matrix)` returns nothing then all k-nearest 
+   neighbors in each row are assign equal weights.
 - `sort` : if true requests that the `dists_matrix` be sorted before being passed 
    to `func`. The sort is done in a manner that puts the k-nearest neighbors in 
    each row  of `dists_matrix` in acesending order .
@@ -36,6 +43,10 @@ struct UserDefinedKernel{T<:Function} <: KNNKernel
    UserDefinedKernel(func::F, sort::Bool) where {F<:Function} = new{F}(func, sort)
 end
 
+"""
+    UDK
+Alias for `UserDefinedKernel`
+"""
 const UDK = UserDefinedKernel
 
 UserDefinedKernel(;func= _nothing, sort=false) = UserDefinedKernel(func, sort)

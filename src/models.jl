@@ -3,7 +3,7 @@
 ##########################
 
 """
-MultitargetKNNClassifier(;kwargs...)
+    MultitargetKNNClassifier(;kwargs...)
 
 $KNNClassifierDescription
 
@@ -118,7 +118,7 @@ end
 ##########################
 
 """
-KNNClassifier(;kwargs...)
+    KNNClassifier(;kwargs...)
 
 $KNNClassifierDescription
 
@@ -196,7 +196,7 @@ end
 ##########################
 
 """
-KNNRegressoor(;kwargs...)
+    KNNRegressoor(;kwargs...)
 
 $KNNRegressorDescription
 
@@ -250,7 +250,7 @@ end
 ##########################
 
 """
-MultitargetKNNRegressor(;kwargs...)
+    MultitargetKNNRegressor(;kwargs...)
 
 $KNNRegressorDescription
 
