@@ -24,9 +24,11 @@ makedocs(;
 # up choking the deployment of the docs, so  here we
 # force the environment to ignore this so that Documenter
 # does indeed deploy the docs
-ENV["TRAVIS_PULL_REQUEST"] = "false"
+#ENV["GITHUB_EVENT_NAME"] = "pull_request"
 
 deploydocs(;
+    deploy_config = Documenter.GitHubActions(),
     repo="github.com/alan-turing-institute/NearestNeighborModels.jl.git",
+    push_preview=true
 )
 
