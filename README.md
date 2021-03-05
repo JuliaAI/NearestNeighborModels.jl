@@ -11,7 +11,7 @@ Builds on Kristoffer Carlsson's [NearestNeighbors](https://github.com/Kristoffer
 Builds on contributions of Thibaut Lienart originally residing in [MLJModels.jl](https://github.com/alan-turing-institute/MLJModels.jl/blob/98618d7be53f72054de284fa1796c5292d9071bb/src/NearestNeighbors.jl#L1).
 
 Provides the following models: `KNNRegressor`, `KNNClassifier`,
-`MultitargetKNNRegressor` and `MultitargetClassifier`.
+`MultitargetKNNRegressor` and `MultitargetKNNClassifier`.
 
 Provides a library of kernels for weighting nearest neighbors, including
 all kernels surveyed in the paper [Geler et.al (2016):
