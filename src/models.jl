@@ -152,7 +152,7 @@ end
 function _predict_knnclassifier(weights, y, idxsvec)
     # `classes` and `classes_seen` has an ordering consistent with the pool of y
     classes = @inbounds MMI.classes(y[1])
-    classes_seen = filter(in(unique(y)), classes)
+    classes_seen = filter(in(y), classes)
     nclasses = length(classes)
     nc = length(classes_seen) # Number of classes seen in `y`.
 
