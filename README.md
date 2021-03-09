@@ -1,7 +1,7 @@
 # NearestNeighborModels
 | [Linux] | Coverage | Documentation |
 | :------------ | :------- | :------------ |
-| [![Build Status](https://github.com/alan-turing-institute/NearestNeighborModels.jl/workflows/CI/badge.svg)](https://github.com/alan-turing-institute/NearestNeighborModels.jl/actions) | [![Coverage](https://codecov.io/gh/alan-turing-institute/NearestNeighborModels.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/vollmersj/NearestNeighborModels.jl) | [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://alan-turing-institute.github.io/NearestNeighborModels.jl/dev/) |
+| [![Build Status](https://github.com/alan-turing-institute/NearestNeighborModels.jl/workflows/CI/badge.svg)](https://github.com/alan-turing-institute/NearestNeighborModels.jl/actions) | [![Coverage](https://codecov.io/gh/alan-turing-institute/NearestNeighborModels.jl/branch/master/graph/badge.svg)](https://codecov.io/github/alan-turing-institute/NearestNeighborModels.jl?branch=master) | [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://alan-turing-institute.github.io/NearestNeighborModels.jl/dev/) |
 
 
 Package providing K-nearest neighbor regressors and classifiers, for use with the [MLJ](https://alan-turing-institute.github.io/MLJ.jl/dev/) machine learning framework.
