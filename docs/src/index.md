@@ -51,7 +51,7 @@ end
 ```
 ```jldoctest ex1
 julia> predict(knnc_mach, rows=test_inds)
-60-element MLJBase.UnivariateFiniteArray{Multiclass{2},String,UInt32,Float64,1}:
+60-element MLJBase.UnivariateFiniteVector{Multiclass{2}, String, UInt32, Float64}:
  UnivariateFinite{ScientificTypes.Multiclass{2}}(B=>0.315, O=>0.685)
  UnivariateFinite{ScientificTypes.Multiclass{2}}(B=>1.0, O=>0.0)
  UnivariateFinite{ScientificTypes.Multiclass{2}}(B=>1.0, O=>0.0)
@@ -163,10 +163,12 @@ end
 ```
 ```jldoctest
 julia> table_predictions = predict(multi_knnr_mach, rows=test_inds)
-Tables.MatrixTable{Array{Float64,2}}: (x1 = [0.08676552079000954, 0.38872230178556694, -0.05722812562903978, -0.08454222308611803, 0.308204271265957, 0.17017865975808633, 0.09168784117321499, 0.9096454592475096, -0.35766988886608425, 0.03524924262394776], x2 = [0.28686596450880636, 0.11163952306296969, 0.7527073177116553, 0.1250386143966635, -0.08406347433782672, -0.01368379936598659, 0.16817186394006448, -0.7882848144244573, 0.1589684822637237, -0.3016603072338923])
+Tables.MatrixTable{Matrix{Float64}} with 10 rows, 2 columns, and schema:
+  :x1  Float64
+  :x2  Float64
 
 julia> MLJ.matrix(table_predictions)
-10×2 Array{Float64,2}:
+10×2 Matrix{Float64}:
   0.0867655   0.286866
   0.388722    0.11164
  -0.0572281   0.752707
