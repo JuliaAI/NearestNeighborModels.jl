@@ -164,8 +164,8 @@ end
 ```jldoctest
 julia> table_predictions = predict(multi_knnr_mach, rows=test_inds)
 Tables.MatrixTable{Matrix{Float64}} with 10 rows, 2 columns, and schema:
-  :x1  Float64
-  :x2  Float64
+ :x1  Float64
+ :x2  Float64
 
 julia> MLJ.matrix(table_predictions)
 10×2 Matrix{Float64}:
