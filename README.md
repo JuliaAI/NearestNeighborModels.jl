@@ -21,4 +21,4 @@ data](https://perun.pmf.uns.ac.rs/radovanovic/publications/2016-kais-knn-weighti
 
 Do `list_kernels()` for a complete list. 
 
-For instructions on defining a custom kernel, do `?UserDefinedKernel`.
+For instructions on defining a custom kernel, do `?UserDefinedKernel`. 
