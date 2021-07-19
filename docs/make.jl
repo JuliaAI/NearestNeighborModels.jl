@@ -1,4 +1,4 @@
-using Documenter, NearestNeighborModels
+using Documenter, MLJBase, NearestNeighborModels
 
 makedocs(;
     authors = """
@@ -15,7 +15,8 @@ makedocs(;
         "Home" => "index.md",
         "API" => "api.md"
     ],
-    repo = "https://github.com/alan-turing-institute/NearestNeighborModels.jl/blob/{commit}{path}#L{line}",
+    doctest = false,
+    repo = "https://github.com/JuliaAI/NearestNeighborModels.jl/blob/{commit}{path}#L{line}",
     sitename = "NearestNeighborModels.jl",
 )
 
@@ -28,7 +29,6 @@ makedocs(;
 
 deploydocs(;
     deploy_config = Documenter.GitHubActions(),
-    repo="github.com/alan-turing-institute/NearestNeighborModels.jl.git",
+    repo="github.com/JuliaAI/NearestNeighborModels.jl.git",
     push_preview=true
 )
-
