@@ -55,7 +55,8 @@ jobs:
       - uses: julia-actions/setup-julia@v1
         with:
           version: '1'
-      - run: |
+      - name: Check build conditions
+        run: |
          julia -e '
            function set_environment_variable(name::AbstractString, value::AbstractString)
                github_env = ENV["GITHUB_ENV"]
@@ -93,14 +94,16 @@ jobs:
                @info("We will NOT build the docs")
                set_environment_variable("BUILD_DOCS", "false")
            end'
-      - run: |
+      - name: Install dependencies 
+        run: |
           julia --project=docs -e '
             if ENV["BUILD_DOCS"] == "true"
                 using Pkg
                 Pkg.develop(PackageSpec(path=pwd()))
                 Pkg.instantiate()
             end'
-      - run: |
+      - name: Doctest
+        run: |
           julia --project=docs -e '
             if ENV["BUILD_DOCS"] == "true"
                 using Documenter: doctest
@@ -110,13 +113,14 @@ jobs:
             else
                 @info "skipping the doctests"
             end'
-      - run: julia --project=docs -e '
+      - name: Build and deploy
+        run: julia --project=docs -e '
             if ENV["BUILD_DOCS"] == "true"
-                @info "attempting to build the docs"
-                run(`julia --project=docs docs/make.jl`)
-                @info "successfully built the docs"
+                @info "attempting to build and deploy docs"
+                run(`julia --project=docs --color=yes docs/make.jl`)
+                @info "successfully built and deployed docs"
             else
-                @info "skipping the docs build"
+                @info "skipping doc build and deploy"
             end'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
