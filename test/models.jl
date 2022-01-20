@@ -1,3 +1,68 @@
+@testset "Constructor tests" begin
+    for model in (:KNNClassifier, :KNNRegressor, :MultitargetKNNClassifier, :MultitargetKNNRegressor)
+        @test getfield(
+            (@test_logs (:warn, "Need `K`>=1.\nResetting `K=5`.\n") @eval($model(K=-1))),
+            :K
+        ) == 5
+        
+        @test getfield(
+            (@test_logs (
+                :warn, 
+                "`algorithm` must be set to one of `:kdtree`, `:balltree`, `:brutetree`." *
+                "\nResetting `algorithm = :kdtree`.\n"
+            ) @eval($model(algorithm=:mytree))),
+            :algorithm
+        ) == :kdtree
+
+        @test getfield(
+            (@test_logs (
+                :warn,
+                "Reordering isn't supported for `algorithm = :brutetree`." *
+                "\nResetting `reorder = false`.\n"
+            ) @eval($model(algorithm=:brutetree, reorder=true))),
+            :reorder
+        ) == false
+
+        @test getfield(
+            (@test_logs (
+                :warn,
+                "Non-zero `leafsize` isn't supported for `algorithm = :brutetree`." *
+                "\nResetting `leafsize = 0`.\n"
+            ) @eval($model(algorithm=:brutetree, leafsize=1))),
+            :leafsize
+        ) == 0
+
+        m = @test_logs (
+            :warn,
+            "Non-zero `leafsize` isn't supported for `algorithm = :brutetree`." *
+            "\nResetting `leafsize = 0`.\n"*
+            "Reordering isn't supported for `algorithm = :brutetree`." *
+            "\nResetting `reorder = false`.\n"
+        ) @eval($model(algorithm=:brutetree, reorder=true, leafsize=1))
+
+        @test m.leafsize == 0
+        @test !m.reorder
+
+        @test getfield(
+            (@test_logs (
+                :warn,
+                "For `algorithm != :brutetree` Need `leafsize >= 1`."*
+                "\nResetting `leafsize = 10`.\n"
+            ) @eval($model(algorithm=:kdtree, leafsize=0))),
+            :leafsize
+        ) == 10     
+
+        @test getfield(
+            (@test_logs (
+                :warn,
+                "For `algorithm = :kdtree` only metrics which are of type" * 
+                "`$(NN.MinkowskiMetric)` are supported.\nResetting `metric = Euclidean()`.\n"
+            ) @eval($model(algorithm=:kdtree, metric= Haversine()))),
+            :metric
+        ) == Euclidean()
+    end
+end
+
 @testset "KNNClassifier" begin
     # create something rather silly: 3 massive clusters very separated
     rng = StableRNG(10)
@@ -127,7 +192,7 @@ end
     end
 
     f, _, _ = MLJBase.fit(model, 1, X, y, w)
-    posterior3 = average([predict(model, f, X)...])
+    posterior3 = mean([predict(model, f, X)...])
 
     # skewed weights gives similarly skewed posterior:
     @test abs(pdf(posterior3, 'b')/(2*pdf(posterior3, 'a'))  - 1) < 0.1
