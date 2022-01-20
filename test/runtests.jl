@@ -13,7 +13,7 @@ const NN = NearestNeighborModels.NearestNeighbors
 
 include("testutils.jl")
 
-@testset verbose=true "NearestNeighborModels.jl" begin
+@testset "NearestNeighborModels.jl" begin
     @testset "models" begin
         include("models.jl")
     end
