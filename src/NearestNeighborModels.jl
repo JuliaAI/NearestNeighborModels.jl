@@ -61,14 +61,15 @@ const KNNCoreFields = """
         [Distances.jl](https://github.com/JuliaStats/Distances.jl) for the 
         distance between points. For `algorithm = :kdtree` only metrics which are of 
         type `$(NN.MinkowskiMetric)` are supported.
-    * `leafsize::Int = algorithm == :brutetree ? 0 : 10` : determines the number of points 
-        at which to stop splitting the tree. This option doesn't apply to `:brutetree` 
-        algorithm, since `brutetree` isn't actually a tree.
-    * `reorder::Bool = algorithm != :brutetree` : if `true` then points which are close in 
+    * `leafsize::Int = algorithm == 10` : determines the number of points 
+        at which to stop splitting the tree. This option is ignored and always taken as `0` 
+        for `algorithm = :brutetree`, since `brutetree` isn't actually a tree.
+    * `reorder::Bool = true` : if `true` then points which are close in 
         distance are placed close in memory. In this case, a copy of the original data 
         will be made so that the original data is left unmodified. Setting this to `true` 
         can significantly improve performance of the specified `algorithm` 
-        (except `:brutetree`).
+        (except `:brutetree`). This option is ignored and always taken as `false` for 
+        `algorithm = :brutetree`.
     * `weights::KNNKernel=Uniform()` : kernel used in assigning weights to the 
         k-nearest neighbors for each observation. An instance of one of the types in 
         `list_kernels()`. User-defined weighting functions can be passed by wrapping the 
