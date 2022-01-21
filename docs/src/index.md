@@ -51,27 +51,27 @@ end
 ```
 ```jldoctest ex1
 julia> predict(knnc_mach, rows=test_inds)
-60-element UnivariateFiniteVector{Multiclass{2}, String, UInt32, Float64}:
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>0.315, O=>0.685)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
+60-element CategoricalDistributions.UnivariateFiniteArray{Multiclass{2}, String, UInt32, Float64, 1}:
+ UnivariateFinite{Multiclass{2}}(B=>0.315, O=>0.685)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
  ⋮
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>0.613, O=>0.387)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>0.83, O=>0.17)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>0.361, O=>0.639)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>0.824, O=>0.176)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
- UnivariateFinite{ScientificTypesBase.Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>0.613, O=>0.387)
+ UnivariateFinite{Multiclass{2}}(B=>0.83, O=>0.17)
+ UnivariateFinite{Multiclass{2}}(B=>0.361, O=>0.639)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>0.824, O=>0.176)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
+ UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
 ```
 Alternatively categorical predictions may be obtained using `predict_mode` as shown below.
 ```jldoctest ex1
