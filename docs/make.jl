@@ -15,7 +15,7 @@ makedocs(;
         "Home" => "index.md",
         "API" => "api.md"
     ],
-    doctest = true,
+    doctest = false, # don't runt doctest as doctests are automatically run separately in ci.
     repo = "https://github.com/JuliaAI/NearestNeighborModels.jl/blob/{commit}{path}#L{line}",
     sitename = "NearestNeighborModels.jl",
 )

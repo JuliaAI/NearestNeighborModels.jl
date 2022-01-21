@@ -107,7 +107,7 @@ jobs:
           julia --project=docs -e '
             if ENV["BUILD_DOCS"] == "true"
                 using Documenter: doctest
-                using NearestNeighborModels
+                using NearestNeighborModels, MLJBase
                 @info "attempting to run the doctests"
                 doctest(NearestNeighborModels)
             else
