@@ -9,14 +9,14 @@ $KNNClassifierDescription
 
 $MultitargetKNNClassifierFields
 """
-@mlj_model mutable struct MultitargetKNNClassifier <: MMI.Probabilistic
-    K::Int = 5::(_ > 0)
-    algorithm::Symbol = :kdtree::(_ in (:kdtree, :brutetree, :balltree))
-    metric::Metric = Euclidean()
-    leafsize::Int = 10::(_ ≥ 0)
-    reorder::Bool = true
-    weights::KNNKernel = Uniform()
-    output_type::Type{<:MultiUnivariateFinite} = DictTable
+mutable struct MultitargetKNNClassifier <: MMI.Probabilistic
+    K::Int
+    algorithm::Symbol
+    metric::Metric
+    leafsize::Int
+    reorder::Bool
+    weights::KNNKernel
+    output_type::Type{<:MultiUnivariateFinite}
 end
 
 function _predictmode_knnclassifier(weights, y, idxsvec)
@@ -124,13 +124,13 @@ $KNNClassifierDescription
 
 $KNNFields
 """
-@mlj_model mutable struct KNNClassifier <: MMI.Probabilistic
-    K::Int = 5::(_ > 0)
-    algorithm::Symbol = :kdtree::(_ in (:kdtree, :brutetree, :balltree))
-    metric::Metric = Euclidean()
-    leafsize::Int = 10::(_ ≥ 0)
-    reorder::Bool = true
-    weights::KNNKernel = Uniform()
+mutable struct KNNClassifier <: MMI.Probabilistic
+    K::Int
+    algorithm::Symbol
+    metric::Metric
+    leafsize::Int
+    reorder::Bool
+    weights::KNNKernel
 end
 
 function setup_predict_args(
@@ -196,19 +196,19 @@ end
 ##########################
 
 """
-    KNNRegressoor(;kwargs...)
+    KNNRegressor(;kwargs...)
 
 $KNNRegressorDescription
 
 $KNNFields
 """
-@mlj_model mutable struct KNNRegressor <: MMI.Deterministic
-    K::Int = 5::(_ > 0)
-    algorithm::Symbol = :kdtree::(_ in (:kdtree, :brutetree, :balltree))
-    metric::Metric = Euclidean()
-    leafsize::Int = 10::(_ ≥ 0)
-    reorder::Bool = true
-    weights::KNNKernel = Uniform()
+mutable struct KNNRegressor <: MMI.Deterministic
+    K::Int
+    algorithm::Symbol
+    metric::Metric
+    leafsize::Int
+    reorder::Bool
+    weights::KNNKernel
 end
 
 function setup_predict_args(
@@ -245,9 +245,9 @@ function MMI.predict(m::KNNRegressor, fitresult, X)
     return preds
 end
 
-##########################
+############################
 ### MultitargetKNNRegressor
-##########################
+############################
 
 """
     MultitargetKNNRegressor(;kwargs...)
@@ -256,13 +256,13 @@ $KNNRegressorDescription
 
 $KNNFields
 """
-@mlj_model mutable struct MultitargetKNNRegressor <: MMI.Deterministic
-    K::Int = 5::(_ > 0)
-    algorithm::Symbol = :kdtree::(_ in (:kdtree, :brutetree, :balltree))
-    metric::Metric = Euclidean()
-    leafsize::Int = 10::(_ ≥ 0)
-    reorder::Bool = true
-    weights::KNNKernel = Uniform()
+mutable struct MultitargetKNNRegressor <: MMI.Deterministic
+    K::Int
+    algorithm::Symbol
+    metric::Metric
+    leafsize::Int
+    reorder::Bool
+    weights::KNNKernel
 end
 
 function setup_predict_args(
@@ -321,8 +321,90 @@ function MMI.predict(m::MultitargetKNNRegressor, fitresult, X)
     return MMI.table(preds, names = names)
 end
 
+################################
+### Model Keyword Constructors
+################################
+
+const KNN = Union{
+    KNNClassifier, KNNRegressor, MultitargetKNNRegressor, MultitargetKNNClassifier
+}
+
+function MultitargetKNNClassifier(;
+    K::Int=5,
+    algorithm::Symbol=:kdtree,
+    metric::Metric=Euclidean(),
+    leafsize::Int = (algorithm == :brutetree) ? 0 : 10,
+    reorder::Bool = algorithm != :brutetree,
+    weights::KNNKernel=Uniform(),
+    output_type::Type{<:MultiUnivariateFinite} = DictTable
+)   
+    model = MultitargetKNNClassifier(
+        K, algorithm, metric, leafsize, reorder, weights, output_type
+    )
+    message = MMI.clean!(model)
+    isempty(message) || @warn message
+    return model
+end
+
+for knnmodel in (:KNNRegressor, :KNNClassifier, :MultitargetKNNRegressor)
+    quote
+    function $knnmodel(;
+        K::Int=5,
+        algorithm::Symbol=:kdtree,
+        metric::Metric=Euclidean(),
+        leafsize::Int = (algorithm == :brutetree) ? 0 : 10,
+        reorder::Bool = algorithm != :brutetree,
+        weights::KNNKernel=Uniform()
+    )   
+        model = $knnmodel(
+            K, algorithm, metric, leafsize, reorder, weights
+        )
+        message = MMI.clean!(model)
+        isempty(message) || @warn message
+        return model
+    end
+    end |> eval
+end
+
+function MMI.clean!(model::KNN)
+    warning = ""
+    if model.K < 1
+        warning *= "Need `K`>=1.\nResetting `K=5`.\n"
+        model.K = 5
+    end
+    if !(model.algorithm in (:kdtree, :balltree, :brutetree))
+        warning *= "`algorithm` must be set to one of `:kdtree`, `:balltree`, `:brutetree`." *
+        "\nResetting `algorithm = :kdtree`.\n"
+        model.algorithm = :kdtree
+    end
+    if model.algorithm == :brutetree
+        if model.leafsize != 0
+            warning *= "Non-zero `leafsize` isn't supported for `algorithm = :brutetree`." *
+                "\nResetting `leafsize = 0`.\n"
+            model.leafsize = 0
+        end
+        if model.reorder
+            warning *= "Reordering isn't supported for `algorithm = :brutetree`." *
+                "\nResetting `reorder = false`.\n"
+            model.reorder = false
+        end
+    else
+        if model.leafsize < 1
+            warning *= "For `algorithm != :brutetree` Need `leafsize >= 1`."*
+                "\nResetting `leafsize = 10`.\n"
+            model.leafsize = 10
+        end
+    end
+    if model.algorithm == :kdtree && !isa(model.metric, NN.MinkowskiMetric)
+        warning *= "For `algorithm = :kdtree` only metrics which are of type" * 
+        "`$(NN.MinkowskiMetric)` are supported.\nResetting `metric = Euclidean()`.\n"
+        model.metric = Euclidean()
+    end
+    return warning
+end
+
 ##################
-### FIT MODELS
+### Model Fit
 ##################
 
 struct MultiKNNRegressorTarget{S, M<:AbstractMatrix}
@@ -354,10 +436,6 @@ struct KNNResult{T, U, W}
     sample_weights::W
 end
 
-const KNN = Union{
-    KNNClassifier, KNNRegressor, MultitargetKNNRegressor, MultitargetKNNClassifier
-}
-
 function MMI.fit(m::KNN, verbosity::Int, X, y, w::Union{Nothing, Vec{<:Real}}=nothing)
     Xmatrix = transpose(MMI.matrix(X))
     target = get_target(m, y)
@@ -370,11 +448,11 @@ function MMI.fit(m::KNN, verbosity::Int, X, y, w::Union{Nothing, Vec{<:Real}}=no
         )
     end
     if m.algorithm == :kdtree
-        tree = NN.KDTree(Xmatrix; leafsize=m.leafsize, reorder=m.reorder)
+        tree = NN.KDTree(Xmatrix, m.metric; leafsize=m.leafsize, reorder=m.reorder)
     elseif m.algorithm == :balltree
-        tree = NN.BallTree(Xmatrix; leafsize=m.leafsize, reorder=m.reorder)
+        tree = NN.BallTree(Xmatrix, m.metric; leafsize=m.leafsize, reorder=m.reorder)
     elseif m.algorithm == :brutetree
-        tree = NN.BruteTree(Xmatrix; leafsize=m.leafsize, reorder=m.reorder)
+        tree = NN.BruteTree(Xmatrix, m.metric; leafsize=m.leafsize, reorder=m.reorder)
     end
     report = NamedTuple{}()
     return KNNResult(tree, target, w), nothing, report

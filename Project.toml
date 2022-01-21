@@ -1,7 +1,7 @@
 name = "NearestNeighborModels"
 uuid = "636a865e-7cf4-491e-846c-de09b730eb36"
 authors = ["Anthony D. Blaom <anthony.blaom@gmail.com>", "Sebastian Vollmer <s.vollmer.4@warwick.ac.uk>", "Thibaut Lienart <thibaut.lienart@gmail.com>", "Okon Samuel <okonsamuel50@gmail.com>"]
-version = "0.1.6"
+version = "0.2.0"
 
 [deps]
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
@@ -21,7 +21,7 @@ MLJModelInterface = "^0.3.5, ^0.4, 1.0"
 NearestNeighbors = "^0.4"
 StatsBase = "^0.33"
 Tables = "^1.2"
-julia = "1"
+julia = "1.3"
 
 [extras]
 MLJBase = "a7f614a8-145f-11e9-1d2a-a57a1082229d"

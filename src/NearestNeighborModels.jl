@@ -1,6 +1,6 @@
 module NearestNeighborModels
 
-# ===================================================================
+# ==============================================================================================
 # IMPORTS
 import MLJModelInterface
 import MLJModelInterface: @mlj_model, metadata_model, metadata_pkg,
@@ -14,12 +14,12 @@ using FillArrays
 using LinearAlgebra
 using Statistics
 
-# ===================================================================
+# ==============================================================================================
 ## EXPORTS
 export list_kernels, ColumnTable, DictTable
 
 # Export KNN models
-# KNN models are exported automatically by `@mjl_model`
+export KNNClassifier, KNNRegressor, MultitargetKNNClassifier, MultitargetKNNRegressor
 
 # Re-Export Distance Metrics from `Distances.jl`
 export Euclidean, Cityblock, Minkowski, Chebyshev, Hamming, WeightedEuclidean,
@@ -29,7 +29,7 @@ export Euclidean, Cityblock, Minkowski, Chebyshev, Hamming, WeightedEuclidean,
 export DualU, DualD, Dudani, Fibonacci, Inverse, ISquared, KNNKernel, Macleod, Rank,
     ReciprocalRank, UDK, Uniform, UserDefinedKernel, Zavreal
 
-# ===================================================================
+# ===============================================================================================
 ## CONSTANTS
 const Vec{T} = AbstractVector{T}
 const Mat{T} = AbstractMatrix{T}
@@ -57,9 +57,19 @@ const KNNClassifierDescription = """
 const KNNCoreFields = """
     * `K::Int=5` : number of neighbors
     * `algorithm::Symbol = :kdtree` : one of `(:kdtree, :brutetree, :balltree)`
-    * `metric::Metric = Euclidean()` : a `Metric` object for the distance between points
-    * `leafsize::Int = 10` : at what number of points to stop splitting the tree
-    * `reorder::Bool = true` : if true puts points close in distance close in memory
+    * `metric::Metric = Euclidean()` : any `Metric` from 
+        [Distances.jl](https://github.com/JuliaStats/Distances.jl) for the 
+        distance between points. For `algorithm = :kdtree` only metrics which are of 
+        type `$(NN.MinkowskiMetric)` are supported.
+    * `leafsize::Int = algorithm == 10` : determines the number of points 
+        at which to stop splitting the tree. This option is ignored and always taken as `0` 
+        for `algorithm = :brutetree`, since `brutetree` isn't actually a tree.
+    * `reorder::Bool = true` : if `true` then points which are close in 
+        distance are placed close in memory. In this case, a copy of the original data 
+        will be made so that the original data is left unmodified. Setting this to `true` 
+        can significantly improve performance of the specified `algorithm` 
+        (except `:brutetree`). This option is ignored and always taken as `false` for 
+        `algorithm = :brutetree`.
     * `weights::KNNKernel=Uniform()` : kernel used in assigning weights to the 
         k-nearest neighbors for each observation. An instance of one of the types in 
         `list_kernels()`. User-defined weighting functions can be passed by wrapping the 
@@ -101,19 +111,19 @@ const KNNFields = """
     
     """
 
-# ===================================================================
+# ==============================================================================================
 # Includes
 include("utils.jl")
 include("kernels.jl")
 include("models.jl")
     
-# ===================================================================
+# ===============================================================================================
 # List of all models interfaced
 const MODELS = (
     KNNClassifier, KNNRegressor, MultitargetKNNRegressor, MultitargetKNNClassifier
 )
 
-# ====================================================================
+# ===============================================================================================
 # PKG_METADATA
 metadata_pkg.(
     MODELS,

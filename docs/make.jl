@@ -15,7 +15,7 @@ makedocs(;
         "Home" => "index.md",
         "API" => "api.md"
     ],
-    doctest = false,
+    doctest = true,
     repo = "https://github.com/JuliaAI/NearestNeighborModels.jl/blob/{commit}{path}#L{line}",
     sitename = "NearestNeighborModels.jl",
 )
