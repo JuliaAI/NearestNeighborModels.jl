@@ -1,10 +1,11 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 MLJBase = "a7f614a8-145f-11e9-1d2a-a57a1082229d"
+NearestNeighborModels = "636a865e-7cf4-491e-846c-de09b730eb36"
 StableRNGs = "860ef19b-820b-49d6-a774-d7a799459cd3"
 
 [compat]
 Documenter = "^0.24"
-julia = "^1.0"
 MLJBase = "^0.19"
 StableRNGs = "^1.0"
+julia = "^1.0"
