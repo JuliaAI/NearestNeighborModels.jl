@@ -51,7 +51,7 @@ end
 ```
 ```jldoctest ex1
 julia> predict(knnc_mach, rows=test_inds)
-60-element CategoricalDistributions.UnivariateFiniteArray{Multiclass{2}, String, UInt32, Float64, 1}:
+60-element UnivariateFiniteVector{Multiclass{2}, String, UInt32, Float64}:
  UnivariateFinite{Multiclass{2}}(B=>0.315, O=>0.685)
  UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
  UnivariateFinite{Multiclass{2}}(B=>1.0, O=>0.0)
