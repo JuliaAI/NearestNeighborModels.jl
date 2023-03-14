@@ -2,6 +2,7 @@ module NearestNeighborModels
 
 # ==============================================================================================
 # IMPORTS
+import InteractiveUtils: subtypes
 import MLJModelInterface
 import MLJModelInterface: @mlj_model, metadata_model, metadata_pkg,
     Table, Continuous, Count, Finite, OrderedFactor, Multiclass
@@ -43,74 +44,6 @@ const MMI = MLJModelInterface
 const NN = NearestNeighbors
 const PKG = "NearestNeighborModels"
 
-# Definitions of model descriptions for use in model doc-strings.
-const KNNRegressorDescription = """
-    K-Nearest Neighbors regressor: predicts the response associated with a new point
-    by taking an weighted average of the response of the K-nearest points.
-    """
-
-const KNNClassifierDescription = """
-    K-Nearest Neighbors classifier: predicts the class associated with a new point
-    by taking a vote over the classes of the K-nearest points.
-    """
-
-const KNNCoreFields = """
-    * `K::Int=5` : number of neighbors
-    * `algorithm::Symbol = :kdtree` : one of `(:kdtree, :brutetree, :balltree)`
-    * `metric::Metric = Euclidean()` : any `Metric` from 
-        [Distances.jl](https://github.com/JuliaStats/Distances.jl) for the 
-        distance between points. For `algorithm = :kdtree` only metrics which are of 
-        type `$(NN.MinkowskiMetric)` are supported.
-    * `leafsize::Int = algorithm == 10` : determines the number of points 
-        at which to stop splitting the tree. This option is ignored and always taken as `0` 
-        for `algorithm = :brutetree`, since `brutetree` isn't actually a tree.
-    * `reorder::Bool = true` : if `true` then points which are close in 
-        distance are placed close in memory. In this case, a copy of the original data 
-        will be made so that the original data is left unmodified. Setting this to `true` 
-        can significantly improve performance of the specified `algorithm` 
-        (except `:brutetree`). This option is ignored and always taken as `false` for 
-        `algorithm = :brutetree`.
-    * `weights::KNNKernel=Uniform()` : kernel used in assigning weights to the 
-        k-nearest neighbors for each observation. An instance of one of the types in 
-        `list_kernels()`. User-defined weighting functions can be passed by wrapping the 
-        function in a `UDF` kernel. If sample weights `w` are passed during machine 
-        construction e.g `machine(model, X, y, w)` then the weight assigned to each 
-        neighbor is the product of the `KNNKernel` generated weight and the corresponding 
-        neighbor sample weight.
-     
-    """
-
-const SeeAlso = """
-    See also the 
-    [package documentation](https://github.com/KristofferC/NearestNeighbors.jl).
-    For more information about the kernels see the paper by Geler et.al 
-    [Comparison of different weighting schemes for the kNN classifier
-    on time-series data]
-    (https://perun.pmf.uns.ac.rs/radovanovic/publications/2016-kais-knn-weighting.pdf).
-    """
-
-const MultitargetKNNClassifierFields = """
-    ## Keywords Parameters
-    
-    $KNNCoreFields
-    * `output_type::Type{<:MultiUnivariateFinite}=DictTable` : One of 
-       (`ColumnTable`, `DictTable`). The type of table type to use for predictions.
-       Setting to `ColumnTable` might improve performance for narrow tables while setting to 
-       `DictTable` improves performance for wide tables.
-    
-    $SeeAlso
-    
-    """
-
-const KNNFields = """
-    ## Keywords Parameters
-    
-    $KNNCoreFields
-    
-    $SeeAlso
-    
-    """
-
 # ==============================================================================================
 # Includes
 include("utils.jl")
@@ -127,11 +60,11 @@ const MODELS = (
 # PKG_METADATA
 metadata_pkg.(
     MODELS,
-    name = "NearestNeighborModels",
-    uuid = "6f286f6a-111f-5878-ab1e-185364afe411",
-    url = "https://github.com/alan-turing-institute/NearestNeighborModels.jl",
-    license = "MIT",
-    julia = true,
+    package_name = "NearestNeighborModels",
+    package_uuid = "6f286f6a-111f-5878-ab1e-185364afe411",
+    package_url = "https://github.com/JuliaAI/NearestNeighborModels.jl",
+    package_license = "MIT",
+    is_pure_julia = true,
     is_wrapper = false
 )
 

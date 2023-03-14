@@ -2,13 +2,6 @@
 ### MultitargetKNNClassifier
 ##########################
 
-"""
-    MultitargetKNNClassifier(;kwargs...)
-
-$KNNClassifierDescription
-
-$MultitargetKNNClassifierFields
-"""
 mutable struct MultitargetKNNClassifier <: MMI.Probabilistic
     K::Int
     algorithm::Symbol
@@ -117,13 +110,6 @@ end
 ### KNNClassifier
 ##########################
 
-"""
-    KNNClassifier(;kwargs...)
-
-$KNNClassifierDescription
-
-$KNNFields
-"""
 mutable struct KNNClassifier <: MMI.Probabilistic
     K::Int
     algorithm::Symbol
@@ -195,13 +181,6 @@ end
 ### KNNRegressor
 ##########################
 
-"""
-    KNNRegressor(;kwargs...)
-
-$KNNRegressorDescription
-
-$KNNFields
-"""
 mutable struct KNNRegressor <: MMI.Deterministic
     K::Int
     algorithm::Symbol
@@ -249,13 +228,6 @@ end
 ### MultitargetKNNRegressor
 ############################
 
-"""
-    MultitargetKNNRegressor(;kwargs...)
-
-$KNNRegressorDescription
-
-$KNNFields
-"""
 mutable struct MultitargetKNNRegressor <: MMI.Deterministic
     K::Int
     algorithm::Symbol
@@ -447,6 +419,14 @@ function MMI.fit(m::KNN, verbosity::Int, X, y, w::Union{Nothing, Vec{<:Real}}=no
             )
         )
     end
+    if m.K > size(Xmatrix, 2)
+        throw(
+            ArgumentError(
+                "Number of neighbors, `K` can't exceed the number of "*
+                "observations or samples in the feature table `X`"
+            )
+        )
+    end
     if m.algorithm == :kdtree
         tree = NN.KDTree(Xmatrix, m.metric; leafsize=m.leafsize, reorder=m.reorder)
     elseif m.algorithm == :balltree
@@ -469,7 +449,6 @@ metadata_model(
     input = Table(Continuous),
     target = Vec{Continuous},
     weights = true,
-    descr = KNNRegressorDescription,
     path = "$(PKG).KNNRegressor"
 )
 
@@ -478,7 +457,6 @@ metadata_model(
     input = Table(Continuous),
     target = Vec{<:Finite},
     weights = true,
-    descr = KNNClassifierDescription,
     path = "$(PKG).KNNClassifier"
 )
 
@@ -487,7 +465,6 @@ metadata_model(
     input = Table(Continuous),
     target = Table(Finite),
     weights = true,
-    descr = KNNClassifierDescription,
     path = "$(PKG).MultitargetKNNClassifier"
 )
 
@@ -496,6 +473,320 @@ metadata_model(
     input = Table(Continuous),
     target = Table(Continuous),
     weights = true,
-    descr = KNNRegressorDescription,
     path = "$(PKG).MultitargetKNNRegressor"
 )
+
+########################
+### Models Docstrings
+########################
+const KNNFITTEDPARAMS = """
+The fields of `fitted_params(mach)` are:
+
+- `tree`: An instance of either `KDTree`, `BruteTree` or `BallTree` depending on the 
+  value of the `algorithm` hyperparameter (See hyper-parameters section above). 
+  These are data structures that stores the training data with the view of making 
+  quicker nearest neighbor searches on test data points.
+"""
+const KNNFIELDS = """
+    * `K::Int=5` : number of neighbors
+    * `algorithm::Symbol = :kdtree` : one of `(:kdtree, :brutetree, :balltree)`
+    * `metric::Metric = Euclidean()` : any `Metric` from 
+        [Distances.jl](https://github.com/JuliaStats/Distances.jl) for the 
+        distance between points. For `algorithm = :kdtree` only metrics which are 
+        instances of `$(NN.MinkowskiMetric)` are supported.
+    * `leafsize::Int = algorithm == 10` : determines the number of points 
+        at which to stop splitting the tree. This option is ignored and always taken as `0` 
+        for `algorithm = :brutetree`, since `brutetree` isn't actually a tree.
+    * `reorder::Bool = true` : if `true` then points which are close in 
+        distance are placed close in memory. In this case, a copy of the original data 
+        will be made so that the original data is left unmodified. Setting this to `true` 
+        can significantly improve performance of the specified `algorithm` 
+        (except `:brutetree`). This option is ignored and always taken as `false` for 
+        `algorithm = :brutetree`.
+    * `weights::KNNKernel=Uniform()` : kernel used in assigning weights to the 
+        k-nearest neighbors for each observation. An instance of one of the types in 
+        `list_kernels()`. User-defined weighting functions can be passed by wrapping the 
+        function in a [`UserDefinedKernel`](@ref) kernel (see ?UserDefinedKernel for more 
+        info). If observation weights `w` are passed during machine construction then the 
+        weight assigned to each neighbor vote is the product of the kernel generated 
+        weight for that neighbor and the corresponding observation weight.
+     
+    """
+
+"""
+$(MMI.doc_header(KNNClassifier))
+
+KNNClassifier implements [K-Nearest Neighbors classifier](https://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm) 
+which is non-parametric algorithm that predicts a discrete class distribution associated 
+with a new point by taking a vote over the classes of the k-nearest points. Each neighbor 
+vote is assigned a weight based on proximity of the neighbor point to the test point 
+according to a specified distance metric.
+
+For more information about the weighting kernels, see the paper by Geler et.al 
+[Comparison of different weighting schemes for the kNN classifier on time-series data](https://perun.pmf.uns.ac.rs/radovanovic/publications/2016-kais-knn-weighting.pdf). 
+
+# Training data
+In MLJ or MLJBase, bind an instance `model` to data with
+    mach = machine(model, X, y)
+OR
+    mach = machine(model, X, y, w)
+
+Here:
+
+- `X` is any table of input features (eg, a `DataFrame`) whose columns are of scitype
+  `Continuous`; check column scitypes with `schema(X)`.
+
+- `y` is the target, which can be any `AbstractVector` whose element scitype is
+  `<:Finite`; check the scitype with `scitype(y)`
+
+- `w` is the observation weights which can either be `nothing`(default) or an 
+  `AbstractVector` whoose element scitype is `Count` or `Continuous`. This is 
+  different from `weights` kernel which is an hyperparameter to the model, see below.
+
+Train the machine using `fit!(mach, rows=...)`.
+
+# Hyper-parameters
+
+$KNNFIELDS
+
+# Operations
+
+- `predict(mach, Xnew)`: Return predictions of the target given features `Xnew`, which
+  should have same scitype as `X` above. Predictions are probabilistic but uncalibrated.
+
+- `predict_mode(mach, Xnew)`: Return the modes of the probabilistic predictions
+  returned above.
+
+# Fitted parameters
+
+$KNNFITTEDPARAMS
+
+# Examples
+```
+using MLJ
+KNNClassifier = @load KNNClassifier pkg=NearestNeighborModels
+X, y = @load_crabs; # loads the crabs dataset from MLJBase
+# view possible kernels
+NearestNeighborModels.list_kernels()
+# KNNClassifier instantiation
+model = KNNClassifier(weights = NearestNeighborModels.Inverse())
+mach = machine(model, X, y) |> fit! # wrap model and required data in an MLJ machine and fit
+y_hat = predict(mach, X)
+labels = predict_mode(mach, X)
+
+```
+See also [`MultitargetKNNClassifier`](@ref)
+"""
+KNNClassifier
+
+"""
+$(MMI.doc_header(MultitargetKNNClassifier))
+
+Multi-target K-Nearest Neighbors Classifier (MultitargetKNNClassifier) is a variation of 
+[`KNNClassifier](@ref) that assumes the target variable is vector-valued with
+`Multiclass` or `OrderedFactor` components. 
+
+# Training data
+In MLJ or MLJBase, bind an instance `model` to data with
+    mach = machine(model, X, y)
+OR
+    mach = machine(model, X, y, w)
+    
+Here:
+
+- `X` is any table of input features (eg, a `DataFrame`) whose columns are of scitype
+  `Continuous`; check column scitypes with `schema(X)`.
+
+- y` is the target, which can be any table of responses whose element scitype is either
+  `<:Finite`; check the scitype with `scitype(y)`. 
+  Each column of `y` is assumed to belong to a common categorical pool.  
+
+- `w` is the observation weights which can either be `nothing`(default) or an 
+  `AbstractVector` whoose element scitype is `Count` or `Continuous`. This is different 
+  from `weights` kernel which is an hyperparameter to the model, see below.
+
+Train the machine using `fit!(mach, rows=...)`.
+
+# Hyper-parameters
+
+$KNNFIELDS
+
+* `output_type::Type{<:MultiUnivariateFinite}=DictTable` : One of 
+    (`ColumnTable`, `DictTable`). The type of table type to use for predictions.
+    Setting to `ColumnTable` might improve performance for narrow tables while setting to 
+    `DictTable` improves performance for wide tables.
+
+# Operations
+
+- `predict(mach, Xnew)`: Return predictions of the target given features `Xnew`, which
+  should have same scitype as `X` above. Predictions are either a `ColumnTable` or 
+  `DictTable` of `UnivariateFiniteVector` columns depending on the value set for the 
+  `output_type` parameter discussed above.
+
+- `predict_mode(mach, Xnew)`: Return the modes of each column of the table of probabilistic 
+  predictions returned above.
+
+# Fitted parameters
+
+$KNNFITTEDPARAMS
+
+# Examples
+```
+using MLJ, StableRNGs
+
+# set rng for reproducibility
+rng = StableRNG(10)
+
+# Dataset generation
+n, p = 10, 3
+X = table(randn(rng, n, p)) # feature table
+fruit, color = categorical(["apple", "orange"]), categorical(["blue", "green"])
+y = [(fruit = rand(rng, fruit), color = rand(rng, color)) for _ in 1:n] # target_table
+# Each column in y has a common categorical pool as expected
+selectcols(y, :fruit) # categorical array
+selectcols(y, :color) # categorical array
+
+# Load MultitargetKNNClassifier
+MultitargetKNNClassifier = @load MultitargetKNNClassifier pkg=NearestNeighborModels
+
+# view possible kernels
+NearestNeighborModels.list_kernels()
+
+# MultitargetKNNClassifier instantiation
+model = MultitargetKNNClassifier(K=3, weights = NearestNeighborModels.Inverse())
+
+# wrap model and required data in an MLJ machine and fit
+mach = machine(model, X, y) |> fit!
+
+# predict
+y_hat = predict(mach, X)
+labels = predict_mode(mach, X)
+
+```
+See also [`KNNClassifier`](@ref)
+        
+"""
+MultitargetKNNClassifier
+
+"""
+$(MMI.doc_header(KNNRegressor))
+
+KNNRegressor implements [K-Nearest Neighbors regressor](https://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm) 
+which is non-parametric algorithm that predicts the response associated with a new point 
+by taking an weighted average of the response of the K-nearest points.
+
+# Training data
+In MLJ or MLJBase, bind an instance `model` to data with
+    mach = machine(model, X, y)
+OR
+    mach = machine(model, X, y, w)
+
+Here:
+
+- `X` is any table of input features (eg, a `DataFrame`) whose columns are of scitype
+  `Continuous`; check column scitypes with `schema(X)`.
+
+- `y` is the target, which can be any table of responses whose element scitype is 
+    `Continuous`; check the scitype with `scitype(y)`.
+
+- `w` is the observation weights which can either be `nothing`(default) or an 
+  `AbstractVector` whoose element scitype is `Count` or `Continuous`. This is different 
+  from `weights` kernel which is an hyperparameter to the model, see below.
+
+Train the machine using `fit!(mach, rows=...)`.
+
+# Hyper-parameters
+
+$KNNFIELDS
+
+# Operations
+
+- `predict(mach, Xnew)`: Return predictions of the target given features `Xnew`, which
+  should have same scitype as `X` above.
+
+# Fitted parameters
+
+$KNNFITTEDPARAMS
+
+# Examples
+```
+using MLJ
+KNNRegressor = @load KNNRegressor pkg=NearestNeighborModels
+X, y = @load_boston; # loads the crabs dataset from MLJBase
+# view possible kernels
+NearestNeighborModels.list_kernels()
+model = KNNRegressor(weights = NearestNeighborModels.Inverse()) #KNNRegressor instantiation
+mach = machine(model, X, y) |> fit! # wrap model and required data in an MLJ machine and fit
+y_hat = predict(mach, X)
+
+```
+See also [`MultitargetKNNRegressor`](@ref)
+"""
+KNNRegressor
+
+"""
+$(MMI.doc_header(MultitargetKNNRegressor))
+
+Multi-target K-Nearest Neighbors regressor (MultitargetKNNRegressor) is a variation of 
+[`KNNRegressor](@ref) that assumes the target variable is vector-valued with
+`Continuous` components.
+
+# Training data
+In MLJ or MLJBase, bind an instance `model` to data with
+    mach = machine(model, X, y)
+OR
+    mach = machine(model, X, y, w)
+
+Here:
+
+- `X` is any table of input features (eg, a `DataFrame`) whose columns are of scitype
+  `Continuous`; check column scitypes with `schema(X)`.
+
+- `y` is the target, which can be any table of responses whose element scitype is 
+  `Continuous`; check the scitype with `scitype(y)`.
+
+- `w` is the observation weights which can either be `nothing`(default) or an 
+  `AbstractVector` whoose element scitype is `Count` or `Continuous`. This is different 
+  from `weights` kernel which is an hyperparameter to the model, see below.
+
+Train the machine using `fit!(mach, rows=...)`.
+
+# Hyper-parameters
+
+$KNNFIELDS
+
+# Operations
+
+- `predict(mach, Xnew)`: Return predictions of the target given features `Xnew`, which
+  should have same scitype as `X` above.
+
+# Fitted parameters
+
+$KNNFITTEDPARAMS
+
+# Examples
+```
+using MLJ
+
+# Create Data
+X, y = make_regression(10, 5, n_targets=2)
+
+# load MultitargetKNNRegressor
+MultitargetKNNRegressor = @load MultitargetKNNRegressor pkg=NearestNeighborModels
+
+# view possible kernels
+NearestNeighborModels.list_kernels()
+
+# MutlitargetKNNRegressor instantiation
+model = MultitargetKNNRegressor(weights = NearestNeighborModels.Inverse())
+
+# Wrap model and required data in an MLJ machine and fit.
+mach = machine(model, X, y) |> fit! 
+
+# Predict
+y_hat = predict(mach, X)
+
+```
+See also [`KNNRegressor`](@ref)
+"""
+MultitargetKNNRegressor
