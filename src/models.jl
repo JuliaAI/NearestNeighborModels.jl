@@ -506,7 +506,7 @@ const KNNFIELDS = """
     * `weights::KNNKernel=Uniform()` : kernel used in assigning weights to the 
         k-nearest neighbors for each observation. An instance of one of the types in 
         `list_kernels()`. User-defined weighting functions can be passed by wrapping the 
-        function in a [`UserDefinedKernel`](@ref) kernel (see ?UserDefinedKernel for more 
+        function in a [`UserDefinedKernel`](@ref) kernel (do `?NearestNeighborModels.UserDefinedKernel` for more 
         info). If observation weights `w` are passed during machine construction then the 
         weight assigned to each neighbor vote is the product of the kernel generated 
         weight for that neighbor and the corresponding observation weight.
