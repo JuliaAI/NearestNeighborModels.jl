@@ -537,11 +537,11 @@ Here:
   `Continuous`; check column scitypes with `schema(X)`.
 
 - `y` is the target, which can be any `AbstractVector` whose element scitype is
-  `<:Finite`; check the scitype with `scitype(y)`
+  `<:Finite` (`<:Multiclass` or `<:OrderedFactor` will do); check the scitype with `scitype(y)`
 
-- `w` is the observation weights which can either be `nothing`(default) or an 
-  `AbstractVector` whoose element scitype is `Count` or `Continuous`. This is 
-  different from `weights` kernel which is an hyperparameter to the model, see below.
+- `w` is the observation weights which can either be `nothing` (default) or an 
+  `AbstractVector` whose element scitype is `Count` or `Continuous`. This is 
+  different from `weights` kernel which is a model hyperparameter, see below.
 
 Train the machine using `fit!(mach, rows=...)`.
 
@@ -565,7 +565,7 @@ $KNNFITTEDPARAMS
 ```
 using MLJ
 KNNClassifier = @load KNNClassifier pkg=NearestNeighborModels
-X, y = @load_crabs; # loads the crabs dataset from MLJBase
+X, y = @load_crabs; # a table and a vector from the crabs dataset
 # view possible kernels
 NearestNeighborModels.list_kernels()
 # KNNClassifier instantiation
@@ -583,8 +583,8 @@ KNNClassifier
 $(MMI.doc_header(MultitargetKNNClassifier))
 
 Multi-target K-Nearest Neighbors Classifier (MultitargetKNNClassifier) is a variation of 
-[`KNNClassifier](@ref) that assumes the target variable is vector-valued with
-`Multiclass` or `OrderedFactor` components. 
+[`KNNClassifier`](@ref) that assumes the target variable is vector-valued with
+`Multiclass` or `OrderedFactor` components. (Target data must be presented as a table, however.)
 
 # Training data
 In MLJ or MLJBase, bind an instance `model` to data with
@@ -598,12 +598,12 @@ Here:
   `Continuous`; check column scitypes with `schema(X)`.
 
 - y` is the target, which can be any table of responses whose element scitype is either
-  `<:Finite`; check the scitype with `scitype(y)`. 
+  `<:Finite` (`<:Multiclass` or `<:OrderedFactor` will do); check the columns scitypes with `schema(y)`. 
   Each column of `y` is assumed to belong to a common categorical pool.  
 
 - `w` is the observation weights which can either be `nothing`(default) or an 
-  `AbstractVector` whoose element scitype is `Count` or `Continuous`. This is different 
-  from `weights` kernel which is an hyperparameter to the model, see below.
+  `AbstractVector` whose element scitype is `Count` or `Continuous`. This is different 
+  from `weights` kernel which is a model hyperparameter, see below.
 
 Train the machine using `fit!(mach, rows=...)`.
 
@@ -621,7 +621,7 @@ $KNNFIELDS
 - `predict(mach, Xnew)`: Return predictions of the target given features `Xnew`, which
   should have same scitype as `X` above. Predictions are either a `ColumnTable` or 
   `DictTable` of `UnivariateFiniteVector` columns depending on the value set for the 
-  `output_type` parameter discussed above.
+  `output_type` parameter discussed above. The probabilistic predictions are uncalibrated. 
 
 - `predict_mode(mach, Xnew)`: Return the modes of each column of the table of probabilistic 
   predictions returned above.
@@ -728,8 +728,8 @@ KNNRegressor
 $(MMI.doc_header(MultitargetKNNRegressor))
 
 Multi-target K-Nearest Neighbors regressor (MultitargetKNNRegressor) is a variation of 
-[`KNNRegressor](@ref) that assumes the target variable is vector-valued with
-`Continuous` components.
+[`KNNRegressor`](@ref) that assumes the target variable is vector-valued with
+`Continuous` components. (Target data must be presented as a table, however.)
 
 # Training data
 In MLJ or MLJBase, bind an instance `model` to data with
@@ -743,7 +743,7 @@ Here:
   `Continuous`; check column scitypes with `schema(X)`.
 
 - `y` is the target, which can be any table of responses whose element scitype is 
-  `Continuous`; check the scitype with `scitype(y)`.
+  `Continuous`; check column scitypes with `schema(y)`.
 
 - `w` is the observation weights which can either be `nothing`(default) or an 
   `AbstractVector` whoose element scitype is `Count` or `Continuous`. This is different 
