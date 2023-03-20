@@ -49,23 +49,5 @@ const PKG = "NearestNeighborModels"
 include("utils.jl")
 include("kernels.jl")
 include("models.jl")
-    
-# ===============================================================================================
-# List of all models interfaced
-const MODELS = (
-    KNNClassifier, KNNRegressor, MultitargetKNNRegressor, MultitargetKNNClassifier
-)
-
-# ===============================================================================================
-# PKG_METADATA
-metadata_pkg.(
-    MODELS,
-    package_name = "NearestNeighborModels",
-    package_uuid = "6f286f6a-111f-5878-ab1e-185364afe411",
-    package_url = "https://github.com/JuliaAI/NearestNeighborModels.jl",
-    package_license = "MIT",
-    is_pure_julia = true,
-    is_wrapper = false
-)
 
 end # module

@@ -296,9 +296,12 @@ end
 ################################
 ### Model Keyword Constructors
 ################################
+const MODELS = (
+    KNNClassifier, KNNRegressor, MultitargetKNNRegressor, MultitargetKNNClassifier
+)
 
 const KNN = Union{
-    KNNClassifier, KNNRegressor, MultitargetKNNRegressor, MultitargetKNNClassifier
+    MODELS...
 }
 
 function MultitargetKNNClassifier(;
@@ -448,6 +451,7 @@ metadata_model(
     KNNRegressor,
     input = Table(Continuous),
     target = Vec{Continuous},
+    human_name = "K-nearest neighbor regressor",
     weights = true,
     path = "$(PKG).KNNRegressor"
 )
@@ -456,6 +460,7 @@ metadata_model(
     KNNClassifier,
     input = Table(Continuous),
     target = Vec{<:Finite},
+    human_name = "K-nearest neighbor classifier",
     weights = true,
     path = "$(PKG).KNNClassifier"
 )
@@ -464,6 +469,7 @@ metadata_model(
     MultitargetKNNClassifier,
     input = Table(Continuous),
     target = Table(Finite),
+    human_name = "Multitarget K-nearest neighbor classifier",
     weights = true,
     path = "$(PKG).MultitargetKNNClassifier"
 )
@@ -472,8 +478,22 @@ metadata_model(
     MultitargetKNNRegressor,
     input = Table(Continuous),
     target = Table(Continuous),
+    human_name = "Multitarget K-nearest neighbor regressor",
     weights = true,
     path = "$(PKG).MultitargetKNNRegressor"
+)
+
+########################
+### PKG Metadata
+########################
+metadata_pkg.(
+    MODELS,
+    package_name = "NearestNeighborModels",
+    package_uuid = "6f286f6a-111f-5878-ab1e-185364afe411",
+    package_url = "https://github.com/JuliaAI/NearestNeighborModels.jl",
+    package_license = "MIT",
+    is_pure_julia = true,
+    is_wrapper = false
 )
 
 ########################
@@ -527,8 +547,11 @@ For more information about the weighting kernels, see the paper by Geler et.al
 
 # Training data
 In MLJ or MLJBase, bind an instance `model` to data with
+
     mach = machine(model, X, y)
+
 OR
+
     mach = machine(model, X, y, w)
 
 Here:
@@ -588,10 +611,13 @@ Multi-target K-Nearest Neighbors Classifier (MultitargetKNNClassifier) is a vari
 
 # Training data
 In MLJ or MLJBase, bind an instance `model` to data with
+
     mach = machine(model, X, y)
+
 OR
+
     mach = machine(model, X, y, w)
-    
+
 Here:
 
 - `X` is any table of input features (eg, a `DataFrame`) whose columns are of scitype
@@ -677,8 +703,11 @@ by taking an weighted average of the response of the K-nearest points.
 
 # Training data
 In MLJ or MLJBase, bind an instance `model` to data with
+
     mach = machine(model, X, y)
+
 OR
+
     mach = machine(model, X, y, w)
 
 Here:
@@ -733,8 +762,11 @@ Multi-target K-Nearest Neighbors regressor (MultitargetKNNRegressor) is a variat
 
 # Training data
 In MLJ or MLJBase, bind an instance `model` to data with
+
     mach = machine(model, X, y)
+
 OR
+
     mach = machine(model, X, y, w)
 
 Here:
