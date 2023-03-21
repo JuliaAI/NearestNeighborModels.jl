@@ -469,7 +469,7 @@ metadata_model(
     MultitargetKNNClassifier,
     input = Table(Continuous),
     target = Table(Finite),
-    human_name = "Multitarget K-nearest neighbor classifier",
+    human_name = "multitarget K-nearest neighbor classifier",
     weights = true,
     path = "$(PKG).MultitargetKNNClassifier"
 )
@@ -478,7 +478,7 @@ metadata_model(
     MultitargetKNNRegressor,
     input = Table(Continuous),
     target = Table(Continuous),
-    human_name = "Multitarget K-nearest neighbor regressor",
+    human_name = "multitarget K-nearest neighbor regressor",
     weights = true,
     path = "$(PKG).MultitargetKNNRegressor"
 )
