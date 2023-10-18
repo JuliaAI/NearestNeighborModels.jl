@@ -1,6 +1,7 @@
 using NearestNeighborModels
 using Distances
 using StableRNGs
+using StatisticalMeasures
 using Test
 using MLJBase
 using OffsetArrays
