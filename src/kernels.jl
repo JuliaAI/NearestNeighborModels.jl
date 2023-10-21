@@ -199,8 +199,8 @@ end
 """
     Rank()
 
-Assigns each neighbor a weight as a rank such that the closest neighbor get's a weight of 
-`1` and the Kth closest neighbor gets a weight of `K`.
+Assigns each neighbor a weight as a rank from `K` to `1` such that the closest neighbor get's a weight of 
+`K` and the Kth closest neighbor gets a weight of `1`.
 
 For more information see the paper by Geler et.al [Comparison of different weighting 
 schemes for the kNN classifier on time-series data](https://perun.pmf.uns.ac.rs/
