@@ -31,13 +31,15 @@ performance evaluation, hyper-parameter tuning, stacking etc.
 The following example shows how to train a `KNNClassifier` on the crabs dataset.
 
 ```julia
-using NearestNeighborModels, MLJBase
+using NearestNeighborModels: KNNClassifier, Inverse
+using MLJBase: @load_crabs, fit!, machine, nrows, partition, predict, predict_mode
 X, y = @load_crabs; # loads the crabs dataset from MLJBase
 train_inds, test_inds = partition(1:nrows(X), 0.7, shuffle=false);
 knnc = KNNClassifier(weights = Inverse()) # KNNClassifier instantiation
 knnc_mach = machine(knnc, X, y) # wrap model and required data in an MLJ machine
 fit!(knnc_mach, rows=train_inds) # train machine on a subset of the wrapped data `X`
 ```
+
 `UnivariateFinite` predictions can be obtained from the trained machine as shown below
 ```@meta
 DocTestSetup = quote
