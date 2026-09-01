@@ -14,6 +14,7 @@ using Distances
 using FillArrays
 using LinearAlgebra
 using Statistics
+using OrderedCollections
 
 # ==============================================================================================
 ## EXPORTS
@@ -36,8 +37,8 @@ const Vec{T} = AbstractVector{T}
 const Mat{T} = AbstractMatrix{T}
 const Arr{T, N} = AbstractArray{T, N}
 const ColumnTable =  Tables.ColumnTable
-const DictTable = Tables.DictColumns
-const MultiUnivariateFinite = Union{DictTable, ColumnTable}
+const DictColumnTable = Tables.DictColumnTable
+const MultiUnivariateFinite = Union{DictColumnTable, ColumnTable}
 
 # Define constants for easy referencing of packages
 const MMI = MLJModelInterface

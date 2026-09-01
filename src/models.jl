@@ -19,19 +19,21 @@ end
 function dict_preds(::Val{:columnaccess}, func, target_table, idxsvec, weights)
     cols = Tables.columns(target_table)
     colnames = Tables.columnnames(cols)
-    dict_table = Dict(
+    dict = OrderedDict{Symbol, AbstractVector}(
         nm => func(weights, Tables.getcolumn(cols, nm), idxsvec) for nm in colnames
     )
+    dict_table = Tables.DictColumnTable(Tables.Schema(colnames, eltype.(values(dict))), dict)
     return dict_table
 end
 
 function dict_preds(::Val{:noncolumnaccess}, func, target_table, idxsvec, weights)
-     cols = Tables.dictcolumntable(target_table)
-     colnames = Tables.columnnames(cols)
-     dict_table = Dict(
-        nm => func(weights, Tables.getcolumn(cols, nm), idxsvec) for nm in colnames
-     )
-     return dict_table
+    cols = Tables.dictcolumntable(target_table)
+    colnames = Tables.columnnames(cols)
+    dict = OrderedDict{Symbol, AbstractVector}(
+       nm => func(weights, Tables.getcolumn(cols, nm), idxsvec) for nm in colnames
+    )
+    dict_table = Tables.DictColumnTable(Tables.Schema(colnames, eltype.(values(dict))), dict)
+    return dict_table
 end
 
 function dict_preds(func::F, target_table, idxsvec, weights) where {F<:Function}
@@ -71,7 +73,7 @@ function ntuple_preds(func::F, target_table, idxsvec, weights) where {F <: Funct
 end
 
 function univariate_table(::Type{T}, weights, target_table, idxsvec) where {T}
-    table = if T <: DictTable
+    table = if T <: DictColumnTable
         dict_preds(_predict_knnclassifier, target_table, idxsvec, weights)
     else
         ntuple_preds(_predict_knnclassifier, target_table, idxsvec, weights)
@@ -80,7 +82,7 @@ function univariate_table(::Type{T}, weights, target_table, idxsvec) where {T}
 end
 
 function categorical_table(::Type{T}, weights, target_table, idxsvec) where {T}
-    table = if T <: DictTable
+    table = if T <: DictColumnTable
         dict_preds(_predictmode_knnclassifier, target_table, idxsvec, weights)
     else
         ntuple_preds(_predictmode_knnclassifier, target_table, idxsvec, weights)
@@ -311,7 +313,7 @@ function MultitargetKNNClassifier(;
     leafsize::Int = (algorithm == :brutetree) ? 0 : 10,
     reorder::Bool = algorithm != :brutetree,
     weights::KNNKernel=Uniform(),
-    output_type::Type{<:MultiUnivariateFinite} = DictTable
+    output_type::Type{<:MultiUnivariateFinite} = DictColumnTable
 )   
     model = MultitargetKNNClassifier(
         K, algorithm, metric, leafsize, reorder, weights, output_type
@@ -623,7 +625,7 @@ Here:
 - `X` is any table of input features (eg, a `DataFrame`) whose columns are of scitype
   `Continuous`; check column scitypes with `schema(X)`.
 
-- y` is the target, which can be any table of responses whose element scitype is either
+- `y` is the target, which can be any table of responses whose element scitype is either
   `<:Finite` (`<:Multiclass` or `<:OrderedFactor` will do); check the columns scitypes with `schema(y)`. 
   Each column of `y` is assumed to belong to a common categorical pool.  
 
@@ -637,16 +639,16 @@ Train the machine using `fit!(mach, rows=...)`.
 
 $KNNFIELDS
 
-* `output_type::Type{<:MultiUnivariateFinite}=DictTable` : One of 
-    (`ColumnTable`, `DictTable`). The type of table type to use for predictions.
+* `output_type::Type{<:MultiUnivariateFinite}=DictColumnTable` : One of 
+    (`ColumnTable`, `DictColumnTable`). The type of table type to use for predictions.
     Setting to `ColumnTable` might improve performance for narrow tables while setting to 
-    `DictTable` improves performance for wide tables.
+    `DictColumnTable` improves performance for wide tables.
 
 # Operations
 
 - `predict(mach, Xnew)`: Return predictions of the target given features `Xnew`, which
   should have same scitype as `X` above. Predictions are either a `ColumnTable` or 
-  `DictTable` of `UnivariateFiniteVector` columns depending on the value set for the 
+  `DictColumnTable` of `UnivariateFiniteVector` columns depending on the value set for the 
   `output_type` parameter discussed above. The probabilistic predictions are uncalibrated. 
 
 - `predict_mode(mach, Xnew)`: Return the modes of each column of the table of probabilistic 
