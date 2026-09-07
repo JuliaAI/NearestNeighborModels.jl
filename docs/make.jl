@@ -2,21 +2,21 @@ using Documenter, MLJBase, NearestNeighborModels
 
 makedocs(;
     authors = """
-        Anthony D. Blaom <anthony.blaom@gmail.com>, 
-        Sebastian Vollmer <s.vollmer.4@warwick.ac.uk>, 
-        Thibaut Lienart <thibaut.lienart@gmail.com> and 
         Okon Samuel <okonsamuel50@gmail.com>
+        Thibaut Lienart <thibaut.lienart@gmail.com> and
+        Anthony D. Blaom <anthony.blaom@gmail.com>,
+        Sebastian Vollmer <s.vollmer.4@warwick.ac.uk>,
         """,
     format = Documenter.HTML(;
         prettyurls= get(ENV, "CI", "false") == "true"
     ),
     modules = [NearestNeighborModels],
-    pages=[
+    pages = [
         "Home" => "index.md",
         "API" => "api.md"
     ],
     doctest = false, # don't runt doctest as doctests are automatically run separately in ci.
-    repo = "https://github.com/JuliaAI/NearestNeighborModels.jl/blob/{commit}{path}#L{line}",
+    repo = Remotes.GitHub("JuliaAI", "NearestNeighborModels"),
     sitename = "NearestNeighborModels.jl",
 )
 
