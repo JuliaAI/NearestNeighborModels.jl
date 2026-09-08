@@ -1,6 +1,6 @@
-# NearestNeighborModels - Docs
+# NearestNeighborModels.jl
 
-NearestNeighborModels is a julia package providing implemtation of various
+NearestNeighborModels.jl is a julia package providing implemtation of various
 k-nearest-neighbor classifiers and regressors models for use with
 [MLJ](https://juliaml.ai) machine learning framework. It also provides users with an array
 of weighting kernels to choose from for prediction.
