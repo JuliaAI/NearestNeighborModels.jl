@@ -21,14 +21,15 @@ jobs:
         with:
           version: '1'
           show-versioninfo: true
-      - run: |
-          julia --project=docs -e '
-            using Pkg
-            Pkg.develop(PackageSpec(path=joinpath(pwd(), "NearestNeighborModels")))'
+      - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-docdeploy@v1
-        with:
-          install-package: false # because we manually installed above
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-          DOCUMENTER_DEBUG: "true"
+      - name: Run doctests
+        shell: julia --color=yes --project=docs {0}
+        run: |
+          using Documenter: DocMeta, doctest
+          using NearestNeighborModels
+          DocMeta.setdocmeta!(NearestNeighborModels, :DocTestSetup, :(using NearestNeighborModels); recursive=true)
+          doctest(NearestNeighborModels)
