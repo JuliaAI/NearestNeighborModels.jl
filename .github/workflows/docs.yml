@@ -1,0 +1,35 @@
+name: Generate and Deploy Documentation
+on:
+  push:
+    branches:
+      - dev
+    tags: [v*]
+  pull_request:
+
+jobs:
+  build:
+    permissions:
+      contents: write
+      actions: write
+      pull-requests: write
+      statuses: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: julia-actions/cache@v3
+      - uses: actions/checkout@v7
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1'
+          show-versioninfo: true
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-docdeploy@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+      - name: Run doctests
+        shell: julia --color=yes --project=docs {0}
+        run: |
+          using Documenter: DocMeta, doctest
+          using NearestNeighborModels
+          DocMeta.setdocmeta!(NearestNeighborModels, :DocTestSetup, :(using NearestNeighborModels); recursive=true)
+          doctest(NearestNeighborModels)
